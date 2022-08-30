@@ -1,0 +1,2 @@
+# twitchautopredictions
+A chrome extension that automatically collects bonus Twitch points and allows the user to set up auto-predictions
