@@ -1,1 +1,10 @@
-
+{
+  "manifest_version": 1,
+  "name": "Automated Twitch Predictions",
+  "description": "Automatically makes Twitch Predictions using user settings",
+  "version": "1.0",
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  
