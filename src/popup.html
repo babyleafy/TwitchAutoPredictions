@@ -9,12 +9,34 @@
     <div class="Header">
         <h1>Twitch AutoBetter</h1>
     </div>
-    <div class="autoClicker">
+    <div class="autoBonus">
         <label for="autoBonus">Automate Point Bonus Collection
-            <input type="radio" id="autoBonus" name="autoBonus" value="bonusActivated">
+            <input type="checkbox" id="autoBonus" name="autoBonus" value="bonusActivated">
         </label>
     </div>
 
+    <div class = autoBetter">
+        <label for="autoBet">Automate Betting
+            <input type="checkbox" id="autoBet" name="autoBet" value="betActivated">
+        </label><br>
+        <label for="betPeople">% of People
+            <input type="radio" id="betPeople" name="betOptions" value="betPeople"><br>
+            <input type="range" min="1" max="100" value="50" class="slider" id="percentPeople"><br>
+        </label>
+        <label for="betPoints">% of Points
+            <input type="radio" id="betPoints" name="betOptions" value="betPoints"><br>
+            <input type="range" min="1" max="100" value="50" class="slider" id="percentPoints"><br>
+        </label>
+        <label for="betPPP">Average points per person
+            <input type="radio" id="betPPP" name="betOptions" value="betPPP"><br>
+            <label for="lessPPP">Less
+                <input type="radio" id="lessPPP" name="PPP" value="lessPPP">
+            </label>
+            <label for="morePPP">More
+                <input type="radio" id="morePPP" name="PPP" value="morePPP">
+            </label><br>
+        </label>
+    </div>
     <button id='activateGamble'>Activate Gambling/Betting</button>
     <button id='g-settings'>Gambling/Betting Settings</button>
     <!-- figure out some gambling settings here? put more buttons below for types of bets -->
