@@ -1,1 +1,31 @@
+// Check if any Twitch Pages are opened and manually inject twitch-clicker.js if needed
+setTimeout(function(){
+    console.log('Checking content script status');
+
+    // Gets all twitch tabs
+    chrome.tabs.query({
+        url: '*://*.twitch.tv/*',
+    }, function(tabs) {
+        console.log(tabs);
+        // If no Twitch tabs exist, stop the precheck.
+        if (!Array.isArray(tabs) || !tabs.length) {
+            console.log('No matching tabs found.');
+            return null;
+        }
+        tabs.forEach(function(tab) {
+            // Initializes handshake with potential twitch-clicker.js script inside the tab
+            chrome.tabs.sendMessage(tab.id, {text: 'check'}, function(msg) {
+                if(chrome.runtime.lastError) { msg = {}; }
+                else { msg = msg || {}; }
+
+                // If handshake fails (twitch-clicker.js doesn't exist in the tab) - inject the main script and its reverse dependency
+                if (msg.status !== 'confirmed') {
+                    chrome.tabs.executeScript(tab.id, {file: 'twitch-clicker.js'});
+                }});
+        });
+    })}, 1000);
+
+
+//Create popup for extension button
+chrome.browserAction.setPopup({popup: 'popup.html'})
 

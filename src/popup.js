@@ -34,29 +34,7 @@ function restoreOptions() {
 	});
 }
 
-function clickPointButton() {
-    var elems = document.querySelector('.community-points-summary').querySelectorAll('button');
-    elems.forEach(function(currentElem, index, arr) {
-		if (index != 0) {
-			currentElem.click();
-		}
-	});
-}
+//On load
+document.addEventListener('DOMContentLoaded', restoreOptions); //Restores options from storage on loading
+document.getElementById('save').addEventListener('click', saveOptions); //Connects save function to button
 
-function checkForPoints () {
-	Arrive.unbindAllArrive();
-	if (document.body.contains(document.getElementsByClassName('community-points-summary')[0])) {
-		clickPointButton();
-	}
-}
-
-function main() {
-	if (document.getElementById('autoBonus').checked) {
-		checkForPoints();
-	}
-}
-
-document.addEventListener('DOMContentLoaded', restoreOptions);
-document.getElementById('save').addEventListener('click', saveOptions);
-
-main();
