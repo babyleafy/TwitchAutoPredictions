@@ -6,6 +6,36 @@
   "icons": {
     "48": "icon48.png",
     "128": "icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.twitch.tv/*"],
+      "js": ["arrive.js", "action.js"],
+      "run_at" : "document_idle"
+    }
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+  "permissions": [
+    "*://*.twitch.tv/*",
+    "tabs",
+    "storage",
+    "notifications",
+    "webNavigation"
+  ],
+  "web_accessible_resources": [
+    "arrive.js",
+    "action.js"
+  ],
+  "browser_action": {
+    "default_title": "Twitch AutoBetter",
+    "default_icon": {
+      "48": "icon48.png",
+      "128": "icon128.png"
+    },
+    "default_popup": "popup.html"
   }
 }
   
