@@ -1,4 +1,4 @@
-// Check if any Twitch Pages are opened and manually inject twitch-clicker.js if needed
+// Check if any Twitch Pages are opened and manually inject action.js if needed
 setTimeout(function(){
     console.log('Checking content script status');
 
@@ -13,14 +13,15 @@ setTimeout(function(){
             return null;
         }
         tabs.forEach(function(tab) {
-            // Initializes handshake with potential twitch-clicker.js script inside the tab
+            // Initializes handshake with potential action.js script inside the tab
             chrome.tabs.sendMessage(tab.id, {text: 'check'}, function(msg) {
                 if(chrome.runtime.lastError) { msg = {}; }
                 else { msg = msg || {}; }
 
-                // If handshake fails (twitch-clicker.js doesn't exist in the tab) - inject the main script and its reverse dependency
+                // If handshake fails (action.js doesn't exist in the tab) - inject the main script and its reverse dependency
                 if (msg.status !== 'confirmed') {
-                    chrome.tabs.executeScript(tab.id, {file: 'twitch-clicker.js'});
+                    chrome.tabs.executeScript(tab.id, {file: 'action.js'});
+                    chrome.tabs.executeScript(tab.id, {file: 'arrive.js'});
                 }});
         });
     })}, 1000);
@@ -41,7 +42,6 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
         console.log("onHistoryStateUpdated");
     }
 });
-
 
 //Create popup for extension button
 chrome.browserAction.setPopup({popup: 'popup.html'})
