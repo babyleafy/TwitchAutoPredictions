@@ -11,13 +11,13 @@
     </div>
     <div class="autoBonus">
         <label for="autoBonus">Automate Point Bonus Collection
-            <input type="checkbox" id="autoBonus" name="autoBonus" value="bonusActivated">
+            <input type="checkbox" id="autoBonus" name="autoBonus">
         </label>
     </div>
 
     <div class = autoBetter">
         <label for="autoBet">Automate Betting
-            <input type="checkbox" id="autoBet" name="autoBet" value="betActivated">
+            <input type="checkbox" id="autoBet" name="autoBet">
         </label><br>
         <label for="betPeople">% of People
             <input type="radio" id="betPeople" name="betOptions" value="betPeople"><br>
@@ -27,23 +27,11 @@
             <input type="radio" id="betPoints" name="betOptions" value="betPoints"><br>
             <input type="range" min="1" max="100" value="50" class="slider" id="percentPoints"><br>
         </label>
-        <label for="betPPP">Average points per person
-            <input type="radio" id="betPPP" name="betOptions" value="betPPP"><br>
-            <label for="lessPPP">Less
-                <input type="radio" id="lessPPP" name="PPP" value="lessPPP">
-            </label>
-            <label for="morePPP">More
-                <input type="radio" id="morePPP" name="PPP" value="morePPP">
-            </label><br>
-        </label>
     </div>
     <div>
         <button class="buttonStyle" id='save'>Save settings</button>
         <div id = "saved"></div>
     </div>
-
-
-
 
     <script src="popup.js"></script>
 </body>

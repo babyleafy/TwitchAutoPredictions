@@ -25,6 +25,23 @@ setTimeout(function(){
         });
     })}, 1000);
 
+// Handle URL change for Twitch Tabs to prevent bonus points detection from breaking
+chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
+    if(details.frameId === 0) { // indicates the navigation happens in the tab content window, not in a subframe
+        if(!(details.url.toUpperCase().indexOf('twitch.tv'.toUpperCase()) !== -1)) {
+            // Not a Twitch.tv tab, ignoring
+            return
+        }
+
+        chrome.tabs.sendMessage(details.tabId, {
+            urlChanged: 1
+        }, function (msg) {
+            if (chrome.runtime.lastError) { msg = {}; } else { msg = msg || {}; }
+        });
+        console.log("onHistoryStateUpdated");
+    }
+});
+
 
 //Create popup for extension button
 chrome.browserAction.setPopup({popup: 'popup.html'})
