@@ -43,11 +43,14 @@ function restoreOptions() {
 	chrome.storage.sync.get({
 		bonus: false,
 		bet: false,
-		betOptions: 'betPeople',
+		betOptions: null,
 	}, function(items) {
 		document.getElementById('autoBonus').checked = items.autoBonus;
 		document.getElementById('autoBet').checked = items.autoBet;
-		document.querySelector('input[name="betOptions"]:checked').value = items.betOptions;
+		let bets = document.querySelector('input[name="betOptions"]:checked');
+		if (bets != null) {
+			bets.value = items.betOptions;
+		}
 	});
 	console.log("Options restored");
 }
