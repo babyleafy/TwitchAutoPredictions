@@ -4,13 +4,14 @@ function saveOptions() {
 	let betOptions = document.querySelector('input[name="betOptions"]:checked')?.value;
 
 	chrome.storage.sync.set({
-		bonus: bonus,
-		bet: bet,
-		betOptions: betOptions,
+		[bonus]: bonus,
+		[bet]: bet,
+		[betOptions]: betOptions,
 	}, function() {
 		// Update status to let user know options were saved.
 		let saveStatus = document.getElementById('status');
 		saveStatus.innerHTML = 'Options saved! Please refresh Twitch Tabs';
+		console.log('test');
 		setTimeout(function() {
 			saveStatus.innerHTML = '';
 		}, 750);
@@ -51,8 +52,11 @@ function restoreOptions() {
 		if (bets != null) {
 			bets.value = items.betOptions;
 		}
+		console.log("Bonus: " + items.autoBonus + " Bet: " + items.autoBet + " Bet Options: " + items.betOptions);
 	});
 	console.log("Options restored");
+
+
 }
 
 //On load
