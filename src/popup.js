@@ -2,11 +2,10 @@ function saveOptions() {
 	let bonus = document.getElementById('autoBonus').checked;
 	let bet = document.getElementById('autoBet').checked;
 	let betOptions = document.querySelector('input[name="betOptions"]:checked')?.value;
-
 	chrome.storage.sync.set({
-		[bonus]: bonus,
-		[bet]: bet,
-		[betOptions]: betOptions,
+		bonus: bonus,
+		bet: bet,
+		betOptions: betOptions,
 	}, function() {
 		// Update status to let user know options were saved.
 		let saveStatus = document.getElementById('status');
@@ -42,20 +41,19 @@ function saveOptions() {
 // Restores Options state using the preferences saved in chrome.storage
 function restoreOptions() {
 	chrome.storage.sync.get({
-		bonus: false,
-		bet: false,
-		betOptions: null,
+		'bonus': false,
+		'bet': false,
+		'betOptions': null
 	}, function(items) {
-		document.getElementById('autoBonus').checked = items.autoBonus;
-		document.getElementById('autoBet').checked = items.autoBet;
+		document.getElementById('autoBonus').checked = items.bonus;
+		document.getElementById('autoBet').checked = items.bet;
 		let bets = document.querySelector('input[name="betOptions"]:checked');
 		if (bets != null) {
 			bets.value = items.betOptions;
 		}
-		console.log("Bonus: " + items.autoBonus + " Bet: " + items.autoBet + " Bet Options: " + items.betOptions);
+		console.log("Bonus: " + items.bonus + " Bet: " + items.bet + " Bet Options: " + items.betOptions);
 	});
 	console.log("Options restored");
-
 
 }
 
