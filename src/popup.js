@@ -9,10 +9,10 @@ function saveOptions() {
 		betOptions: betOptions,
 	}, function() {
 		// Update status to let user know options were saved.
-		var status = document.getElementById('status');
-		status.textContent = 'Options saved! Please refresh Twitch Tabs';
+		let saveStatus = document.getElementById('status');
+		saveStatus.innerHTML = 'Options saved! Please refresh Twitch Tabs';
 		setTimeout(function() {
-			status.textContent = '';
+			saveStatus.innerHTML = '';
 		}, 750);
 	});
 

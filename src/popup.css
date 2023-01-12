@@ -1,7 +1,12 @@
 body {
     background-color: white;
     font-family: Georgia, serif;
+    padding-top: 10px;
+    align-items: center;
     text-align: center;
+    margin: 10px;
+    white-space: nowrap;
+    font-weight: normal;
     line-height: 20px;
 }
 input[type="range"] {
