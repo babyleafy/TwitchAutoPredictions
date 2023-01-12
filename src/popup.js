@@ -10,7 +10,6 @@ function saveOptions() {
 		// Update status to let user know options were saved.
 		let saveStatus = document.getElementById('status');
 		saveStatus.innerHTML = 'Options saved! Please refresh Twitch Tabs';
-		console.log('test');
 		setTimeout(function() {
 			saveStatus.innerHTML = '';
 		}, 750);
@@ -51,7 +50,7 @@ function restoreOptions() {
 		if (bets != null) {
 			bets.value = items.betOptions;
 		}
-		console.log("Bonus: " + items.bonus + " Bet: " + items.bet + " Bet Options: " + items.betOptions);
+		console.log("Bonus: " + items.bonus + " Bet: " + items.bet + " 	Options: " + items.betOptions);
 	});
 	console.log("Options restored");
 
