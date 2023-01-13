@@ -1,10 +1,19 @@
-const data = await chrome.storage.sync.get(['bonus', 'bet', 'betOptions']);
 let true_check = false;
-let bonus = data.bonus;
-let bet = data.bet;
-let betOptions = data.betOptions;
-// obtain from either storage directly or selected buttons
+let bonus;
+let bet;
+let betOptions = null;
+// obtains options from storage
+chrome.storage.sync.get({
+    'bonus': false,
+    'bet': false,
+    'betOptions': null
+}, function(items) {
+    bonus = items.bonus;
+    bet = items.bet;
+    betOptions = items.betOptions;
+});
 
+//Switches status when user changes options
 chrome.storage.onChanged.addListener(function(changes, namespace) {
     for (let key in changes) {
         let storageChange = changes[key];
@@ -23,6 +32,7 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
     }
 });
 
+//Redundancy, additionally to check for handshake between background.js
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     if (msg.text === "check") {
         sendResponse({status: 'confirmed'});
@@ -57,6 +67,11 @@ function clickPointButton() {
     });
 }
 
+function makePrediction() {
+    //TODO use query selector to find make predictions button, fill out the input, then click
+}
+
+
 function checkPage() {
     // Prevent firing script upon simultaneous redirects and fast page switching
     if (!true_check) { return }
@@ -77,6 +92,10 @@ function checkPage() {
             document.getElementsByClassName('community-points-summary').arrive('button',
                 clickPointButton);
         }
+        if (bet) {
+            makePrediction();
+            //TODO connect arrive event to makePrediction
+        }
 
     }
     else {
@@ -88,7 +107,6 @@ function checkPage() {
 function main() {
     setTimeout(function() {
         console.log('Twitch Points Autoclicker: Initialized!');
-
         true_check = true;
         checkPage();
     }, 10000);
