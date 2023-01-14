@@ -46,10 +46,12 @@ function restoreOptions() {
 	}, function(items) {
 		document.getElementById('autoBonus').checked = items.bonus;
 		document.getElementById('autoBet').checked = items.bet;
-		let bets = document.querySelector('input[name="betOptions"]:checked');
-		if (bets != null) {
-			bets.value = items.betOptions;
+		if (items.betOptions === "betPeople") {
+			document.getElementById('betPeople').checked = true;
+		} else if (items.betOptions === "betPoints") {
+			document.getElementById('betPoints').checked = true;
 		}
+		let bets = document.querySelector('input[name="betOptions"]:checked');
 		console.log("Bonus: " + items.bonus + " Bet: " + items.bet + " 	Options: " + items.betOptions);
 	});
 	console.log("Options restored");
