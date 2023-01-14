@@ -59,12 +59,16 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
 
 function clickPointButton() {
     let elems = document.querySelector('.community-points-summary').querySelectorAll('button');
+    let temp1 = document.querySelector('balance-string').getElementsByTagName('span').textcontent;
+
     elems.forEach(function(currentElem, index, arr) {
         if (index !== 0) {
             console.log("Clicked points")
             currentElem.click();
+            let temp2 = document.querySelector('balance-string').getElementsByTagName('span').textcontent;
         }
     });
+    var gain = parseInt(temp2) - parseInt(temp1);
 }
 
 function makePrediction() {
