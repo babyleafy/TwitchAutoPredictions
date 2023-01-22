@@ -2,6 +2,8 @@ let true_check = false;
 let bonus;
 let bet;
 let betOptions;
+let points;
+let betAmount;
 // obtains options from storage
 chrome.storage.sync.get({
     'bonus': false,
@@ -57,6 +59,16 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
 
 });
 
+function until(conditionFunction) {
+
+    const poll = resolve => {
+        if(conditionFunction()) resolve();
+        else setTimeout(_ => poll(resolve), 1000);
+    }
+
+    return new Promise(poll);
+}
+
 function clickPointButton() {
     let elems = document.querySelector('.community-points-summary').querySelectorAll('button');
     elems.forEach(function(currentElem, index, arr) {
@@ -67,8 +79,50 @@ function clickPointButton() {
     });
 }
 
+function openPredictionPage() {
+    document.querySelector('[aria-label = "Points Balance"]').click(); // clicks on points balance
+    console.log("Points balance clicked");
+    let pointsText = document.querySelector('[data-test-selector = "balance-string"]')
+        .firstElementChild.innerHTML; //get current points
+    let pointsString = pointsText.match(/(\d+.\d+)/)[0];
+    points = Number(pointsString);
+    if (pointsText.includes('K')) {
+        points *= 1000;
+    } else if (pointsText.includes('M')) {
+        points *= 1000000;
+    }
+    console.log("Points: " + points);
+    betAmount = Math.floor(points / 12); //TODO make this 15 a user option
+    document.querySelector( //gets to prediction page
+        '[data-test-selector = "predictions-list-item__title"]').closest('button').click();
+    console.log("Prediction interface reached");
+}
+
 function makePrediction() {
-    //TODO use query selector to find make predictions button, fill out the input, then click
+    //Making the prediction
+    let percentBlueElem = document.querySelector(
+        '[data-test-selector = "prediction-summary-outcome__percentage"] [style = "color: rbg(56, 122, 255);"]');
+    if (percentBlueElem === null) {
+        return;
+    }
+    let percentBlueText = percentBlueElem.innerHTML;
+    let percentBlue = Number(percentBlueText.match(/(\d+)/));
+    console.log("Percent Blue: " + percentBlue);
+
+    let pointInputs = document.querySelectorAll('[type = "number"]');
+    if (percentBlue < 50) {
+        pointInputs[0].value = betAmount;
+        document.querySelector( //clicks on blue vote button
+            '[style = "background-color: rgb (56, 122, 255); border-color: rgb(56, 122, 255); color: rgb(255, 255, 255);"]')
+            .closest('button').click();
+        console.log("Clicked blue");
+    } else {
+        pointInputs[1].value = betAmount;
+        document.querySelector( //clicks on red vote button
+            '[style = "background-color: rgb (245, 0, 155); border-color: rgb(245, 0, 155); color: rgb(255, 255, 255);"]')
+            .closest('button').click();
+        console.log("Clicked red");
+    }
 }
 
 
@@ -82,7 +136,6 @@ function checkPage() {
     if (document.body.contains(document.getElementsByClassName('community-points-summary')[0])) {
         // Presumably on a channel page that already contains points section div
         console.log('Detected inside of a channel page.');
-        console.log(true_check);
         console.log('Initializing Arrive');
         console.log('Bonus: ' + bonus + ' Bet: ' + bet + ' BetOptions: ' + betOptions);
 
@@ -93,8 +146,21 @@ function checkPage() {
                 clickPointButton);
         }
         if (bet) {
+            openPredictionPage();
             makePrediction();
-            //TODO connect arrive event to makePrediction
+            document.arrive('[data-test-selector = "community-prediction-highlight-header__title"]',
+                async function() {
+                try {
+                    openPredictionPage();
+                    let timeElement = $('p:contains("Submissions closing in"*)');
+                    await until(_ => Number(timeElement.innerHTML.match(/(\d+)/)) < 15);
+                    makePrediction();
+                    console.log("Made a prediction");
+                } catch (error) {
+                    console.log(error);
+                }
+
+            });
         }
 
     }
