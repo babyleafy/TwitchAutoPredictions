@@ -80,8 +80,10 @@ function clickPointButton() {
 }
 
 function openPredictionPage() {
-    document.querySelector('[aria-label = "Points Balance"]').click(); // clicks on points balance
-    console.log("Points balance clicked");
+    if (!document.body.contains(document.querySelector('[data-test-selector = "predictions-list-item__title"]'))){
+        document.querySelector('[aria-label = "Points Balance"]').click(); // clicks on points balance
+        console.log("Points balance clicked");
+    }
     let pointsText = document.querySelector('[data-test-selector = "balance-string"]')
         .firstElementChild.innerHTML; //get current points
     let pointsString = pointsText.match(/(\d+.\d+)/)[0];
@@ -100,13 +102,21 @@ function openPredictionPage() {
 
 function makePrediction() {
     //Making the prediction
+
     let percentBlueElem = document.querySelector(
-        '[data-test-selector = "prediction-summary-outcome__percentage"] [style = "color: rbg(56, 122, 255);"]');
+        '[data-test-selector="prediction-summary-outcome__percentage"] [style="color: rgb(56, 122, 255);"] span');
+    console.log(percentBlueElem);
     if (percentBlueElem === null) {
+        console.log("Couldn't find percentage");
         return;
     }
+    document.querySelector( //clicks on Predict with Custom Amount button
+        '[data-test-selector = "prediction-checkout-active-footer__input-type-toggle"]').click();
+    console.log("Clicked on Predict with Custom Amount button");
+
     let percentBlueText = percentBlueElem.innerHTML;
-    let percentBlue = Number(percentBlueText.match(/(\d+)/));
+    let percentBlueStringMatch = percentBlueText.match(/(\d+)/)[0];
+    let percentBlue = Number(percentBlueStringMatch);
     console.log("Percent Blue: " + percentBlue);
 
     let pointInputs = document.querySelectorAll('[type = "number"]');
@@ -146,16 +156,21 @@ function checkPage() {
                 clickPointButton);
         }
         if (bet) {
-            openPredictionPage();
-            makePrediction();
+            try {
+                openPredictionPage();
+                makePrediction();
+            } catch (e) {
+                console.log(e);
+            }
             document.arrive('[data-test-selector = "community-prediction-highlight-header__title"]',
                 async function() {
                 try {
                     openPredictionPage();
                     let timeElement = $('p:contains("Submissions closing in"*)');
                     await until(_ => Number(timeElement.innerHTML.match(/(\d+)/)) < 15);
+                    console.log("Await finished!");
                     makePrediction();
-                    console.log("Made a prediction");
+                    console.log("Made a prediction of " + betAmount + " points");
                 } catch (error) {
                     console.log(error);
                 }
@@ -175,7 +190,7 @@ function main() {
         console.log('Twitch Points Autoclicker: Initialized!');
         true_check = true;
         checkPage();
-    }, 10000);
+    }, 15000);
 
 }
 
