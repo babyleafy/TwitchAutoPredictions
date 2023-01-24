@@ -69,6 +69,13 @@ function until(conditionFunction) {
     return new Promise(poll);
 }
 
+function calcTime(){
+    let timeString = $('p:contains("Submissions closing in"*)').innerHTML;
+    let timeMatch = timeString.match(/\D+(\d{1,2}):(\d{2})/)[2];
+    let time = Number(timeMatch);
+    return time;
+}
+
 function clickPointButton() {
     let elems = document.querySelector('.community-points-summary').querySelectorAll('button');
     elems.forEach(function(currentElem, index, arr) {
@@ -94,15 +101,19 @@ function openPredictionPage() {
         points *= 1000000;
     }
     console.log("Points: " + points);
-    betAmount = Math.floor(points / 12); //TODO make this 15 a user option
-    document.querySelector( //gets to prediction page
-        '[data-test-selector = "predictions-list-item__title"]').closest('button').click();
-    console.log("Prediction interface reached");
+    betAmount = Math.floor(points / 10); //TODO make this 15 a user option
+    try {
+        document.querySelector( //gets to prediction page
+            '[data-test-selector = "predictions-list-item__title"]').closest('button').click();
+        console.log("Prediction interface reached");
+    } catch (e) {
+        console.log("Prediction interface reached already");
+    }
+
 }
 
 function makePrediction() {
     //Making the prediction
-
     let percentBlueElem = document.querySelector(
         '[data-test-selector="prediction-summary-outcome__percentage"] [style="color: rgb(56, 122, 255);"] span');
     console.log(percentBlueElem);
@@ -119,19 +130,26 @@ function makePrediction() {
     let percentBlue = Number(percentBlueStringMatch);
     console.log("Percent Blue: " + percentBlue);
 
-    let pointInputs = document.querySelectorAll('[type = "number"]');
+    let pointInputsBlue = document.querySelectorAll('[type = "number"]')[0];
+    let pointInputsRed = document.querySelectorAll('[type = "number"]')[1];
+    console.log(pointInputsBlue);
+    console.log(pointInputsRed);
     if (percentBlue < 50) {
-        pointInputs[0].value = betAmount;
+        pointInputsBlue.value = betAmount;
+        let event = new Event("change", { bubbles: true });
+        pointInputsBlue.dispatchEvent(event);
         document.querySelector( //clicks on blue vote button
-            '[style = "background-color: rgb (56, 122, 255); border-color: rgb(56, 122, 255); color: rgb(255, 255, 255);"]')
+            '[style = "background-color: rgb(56, 122, 255); border-color: rgb(56, 122, 255); color: rgb(255, 255, 255);"]')
             .closest('button').click();
-        console.log("Clicked blue");
+        console.log("Clicked blue with " + betAmount + " points");
     } else {
-        pointInputs[1].value = betAmount;
+        pointInputsRed.value = betAmount;
+        let event = new Event("change", { bubbles: true });
+        pointInputsRed.dispatchEvent(event);
         document.querySelector( //clicks on red vote button
-            '[style = "background-color: rgb (245, 0, 155); border-color: rgb(245, 0, 155); color: rgb(255, 255, 255);"]')
+            '[style = "background-color: rgb(245, 0, 155); border-color: rgb(245, 0, 155); color: rgb(255, 255, 255);"]')
             .closest('button').click();
-        console.log("Clicked red");
+        console.log("Clicked red with " + betAmount + " points");
     }
 }
 
@@ -146,7 +164,6 @@ function checkPage() {
     if (document.body.contains(document.getElementsByClassName('community-points-summary')[0])) {
         // Presumably on a channel page that already contains points section div
         console.log('Detected inside of a channel page.');
-        console.log('Initializing Arrive');
         console.log('Bonus: ' + bonus + ' Bet: ' + bet + ' BetOptions: ' + betOptions);
 
         // Pre-check
@@ -158,7 +175,11 @@ function checkPage() {
         if (bet) {
             try {
                 openPredictionPage();
-                makePrediction();
+                if (calcTime() > 25) {
+                    setTimeout(makePrediction, (calcTime() - 20) * 1000);
+                } else {
+                    makePrediction();
+                }
             } catch (e) {
                 console.log(e);
             }
@@ -166,11 +187,9 @@ function checkPage() {
                 async function() {
                 try {
                     openPredictionPage();
-                    let timeElement = $('p:contains("Submissions closing in"*)');
-                    await until(_ => Number(timeElement.innerHTML.match(/(\d+)/)) < 15);
+                    await until (_ => calcTime() < 20);
                     console.log("Await finished!");
                     makePrediction();
-                    console.log("Made a prediction of " + betAmount + " points");
                 } catch (error) {
                     console.log(error);
                 }
@@ -187,7 +206,6 @@ function checkPage() {
 
 function main() {
     setTimeout(function() {
-        console.log('Twitch Points Autoclicker: Initialized!');
         true_check = true;
         checkPage();
     }, 15000);
