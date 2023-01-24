@@ -81,6 +81,7 @@ function clickPointButton() {
         if (index !== 0) {
             console.log("Clicked points")
             currentElem.click();
+            //TODO send message and update popup with points collected
         }
     });
 }
@@ -100,7 +101,7 @@ function openPredictionPage() {
         points *= 1000000;
     }
     console.log("Points: " + points);
-    betAmount = Math.floor(points / 10); //TODO make this 15 a user option
+    betAmount = Math.floor(points / 10); //TODO make this a user option (what percentage of points they want to click)
     try {
         document.querySelector( //gets to prediction page
             '[data-test-selector = "predictions-list-item__title"]').closest('button').click();
@@ -133,7 +134,7 @@ function makePrediction() {
     let pointInputsRed = document.querySelectorAll('[type = "number"]')[1];
     console.log(pointInputsBlue);
     console.log(pointInputsRed);
-    if (percentBlue < 50) {
+    if (percentBlue < (50 - ~~((0 + 1) / 2))) { //TODO make this 0 a user option (right now 0 is a placeholder for the difference between the two bet options)
         pointInputsBlue.value = betAmount;
         let event = new Event("change", { bubbles: true });
         pointInputsBlue.dispatchEvent(event);
@@ -141,7 +142,7 @@ function makePrediction() {
             '[style = "background-color: rgb(56, 122, 255); border-color: rgb(56, 122, 255); color: rgb(255, 255, 255);"]')
             .closest('button').click();
         console.log("Clicked blue with " + betAmount + " points");
-    } else {
+    } else if (percentBlue > (50 + ~~((0 + 1) /2))) {
         pointInputsRed.value = betAmount;
         let event = new Event("change", { bubbles: true });
         pointInputsRed.dispatchEvent(event);
@@ -149,6 +150,8 @@ function makePrediction() {
             '[style = "background-color: rgb(245, 0, 155); border-color: rgb(245, 0, 155); color: rgb(255, 255, 255);"]')
             .closest('button').click();
         console.log("Clicked red with " + betAmount + " points");
+    } else {
+        console.log("No bet made");
     }
 }
 
@@ -186,7 +189,7 @@ function checkPage() {
                 async function() {
                 try {
                     openPredictionPage();
-                    await until (_ => calcTime() < 20);
+                    await until (_ => calcTime() < 20); //TODO make this 20 a user option: it represents how many seconds left before the bet executes
                     console.log("Await finished!");
                     makePrediction();
                 } catch (error) {
