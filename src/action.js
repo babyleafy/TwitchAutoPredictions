@@ -72,8 +72,7 @@ function until(conditionFunction) {
 function calcTime(){
     let timeString = $('p:contains("Submissions closing in"*)').innerHTML;
     let timeMatch = timeString.match(/\D+(\d{1,2}):(\d{2})/)[2];
-    let time = Number(timeMatch);
-    return time;
+    return Number(timeMatch);
 }
 
 function clickPointButton() {
