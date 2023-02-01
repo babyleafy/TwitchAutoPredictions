@@ -82,6 +82,11 @@ function clickPointButton() {
             console.log("Clicked points")
             currentElem.click();
             //TODO send message and update popup with points collected
+
+            chrome.runtime.sendMessage({increment: "addPoint"}, function(response) {
+                console.log(response.confirm);
+            });
+
         }
     });
 }
