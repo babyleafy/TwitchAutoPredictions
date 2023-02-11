@@ -2,7 +2,7 @@ function saveOptions() {
 	let bonus = document.getElementById('autoBonus').checked;
 	let bet = document.getElementById('autoBet').checked;
 	let betOptions = document.querySelector('input[name="betOptions"]:checked')?.value;
-	let pointSum = document.getElementById('points');
+	let pointSum = document.getElementById('accumulatedClickPoints').innerHTML;
 	chrome.storage.sync.set({
 		bonus: bonus,
 		bet: bet,
@@ -21,7 +21,7 @@ function saveOptions() {
 	chrome.tabs.query({
 		url: '*://*.twitch.tv/*',
 	}, function(tabs) {
-		// If no Twitch tabs exist, stop the precheck.
+		// If no Twitch tabs exist, stop pre-check.
 		if (!Array.isArray(tabs) || !tabs.length) {
 			return null;
 		}
@@ -49,7 +49,7 @@ function restoreOptions() {
 	}, function(items) {
 		document.getElementById('autoBonus').checked = items.bonus;
 		document.getElementById('autoBet').checked = items.bet;
-		document.getElementById('points') = items.pointSum;
+		document.getElementById('points').innerHTML = items.pointSum;
 		if (items.betOptions === "betPeople") {
 			document.getElementById('betPeople').checked = true;
 		} else if (items.betOptions === "betPoints") {
@@ -65,14 +65,14 @@ function restoreOptions() {
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		console.log(sender.tab);
-		if (request.increment == "addPoint")
-			currVal = parseInt(document.getElementById('points').innerHTML);
+		if (request.increment === "addPoint")
+			currVal = parseInt(document.getElementById('accumulatedClickPoints').innerHTML);
 			currVal += 1;
-			document.getElementById('points').innerHTML = currVal.toString();
+			document.getElementById('accumulatedClickPoints').innerHTML = currVal.toString();
 			sendResponse({confirm: "confirmed add"});
 	}
   );
-  
+
 
 //On load
 document.addEventListener('DOMContentLoaded', restoreOptions); //Restores options from storage on loading
