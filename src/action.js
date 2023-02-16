@@ -106,7 +106,7 @@ function openPredictionPage() {
         points *= 1000000;
     }
     console.log("Points: " + points);
-    betAmount = Math.floor(points / 10); //TODO make this a user option (what percentage of points they want to click)
+    betAmount = Math.floor(points * 0.1); //TODO make this 0.1 a user option (what percentage of points they want to click)
     try {
         document.querySelector( //gets to prediction page
             '[data-test-selector = "predictions-list-item__title"]').closest('button').click();

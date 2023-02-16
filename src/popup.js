@@ -3,6 +3,8 @@ function saveOptions() {
 	let bet = document.getElementById('autoBet').checked;
 	let betOptions = document.querySelector('input[name="betOptions"]:checked')?.value;
 	let pointSum = document.getElementById('accumulatedClickPoints').innerHTML;
+	//TODO store all new slider values in chrome storage
+	//TODO save betPoints value
 	chrome.storage.sync.set({
 		bonus: bonus,
 		bet: bet,

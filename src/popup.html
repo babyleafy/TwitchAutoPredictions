@@ -15,22 +15,36 @@
         </label>
     </div>
 
-    <div class = autoBetter">
+    <div class="autoBetter">
         <label for="autoBet">Automate Betting
             <input type="checkbox" id="autoBet" name="autoBet">
         </label><br>
-        <label for="betPeople">% of People
-            <input type="radio" id="betPeople" name="betOptions" value="betPeople"><br>
-            <input type="range" min="1" max="100" value="50" class="slider" id="percentPeople"><br>
-        </label>
-        <label for="betPoints">% of Points
+        <label for="betPoints">Min % Point Difference
             <input type="radio" id="betPoints" name="betOptions" value="betPoints"><br>
-            <input type="range" min="1" max="100" value="50" class="slider" id="percentPoints"><br>
+            <input type="range" min="1" max="50" value="10" class="slider" id="percentPoints"
+                   oninput="this.nextElementSibling.value = this.value + '%'">
+            <output>10%</output>
+            <br>
         </label>
+        <label for="betPoints">Min % People (Coming Soon)
+            <input type="radio" id="betPeople" name="betOptions" value="betPeople"><br>
+            <input type="range" min="1" max="50" value="10" class="slider" id="percentPeople"
+                   oninput="this.nextElementSibling.value = this.value + '%'">
+            <output>10%</output>
+            <br>
+        </label>
+        <label for="betSeconds">Seconds Before Bet Closes
+            <input type="checkbox" id="betSeconds" name="autoBet"> <br>
+            <input type="range" min="1" max="60" value="10" class="slider" id="seconds"
+                   oninput="this.nextElementSibling.value = this.value +'s'">
+            <output>10s</output>
+            <br>
+        </label>
+
     </div>
-    <div>
-        <span id="clickPoints"> Point Total: </span>
-        <span id="accumulatedClickPoints"></span>
+    <div class="pointTotal">
+        <span id="clickPoints"> Clicked Points: </span>
+        <span id="accumulatedClickPoints">0</span>
     </div>
     <div>
         <button id='save'>Save settings</button>
