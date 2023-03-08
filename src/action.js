@@ -1,35 +1,51 @@
 let true_check = false;
 let bonus;
 let bet;
-let betOptions;
-let points;
+let minPercent;
+let seconds;
+let pointSum;
 let betAmount;
+let percentToBet;
 // obtains options from storage
 chrome.storage.sync.get({
     'bonus': false,
     'bet': false,
-    'betOptions': null
+    'minPercent': '10',
+    'seconds': '10',
+    'percentToBet': '10',
+    'pointSum': '0',
 }, function(items) {
     bonus = items.bonus;
     bet = items.bet;
-    betOptions = items.betOptions;
+    minPercent = items.minPercent;
+    seconds = items.seconds;
+    percentToBet = items.percentToBet;
+    pointSum = items.pointSum;
 });
 
 //Switches status when user changes options
 chrome.storage.onChanged.addListener(function(changes, namespace) {
     for (let key in changes) {
         let storageChange = changes[key];
-        if (key === 'bonus') {
-            bonus = storageChange.newValue;
-            console.log("Bonus: " + bonus);
-        }
-        else if (key === 'bet') {
-            bet = storageChange.newValue;
-            console.log("Bet: " + bet);
-        }
-        else if (key === 'betOptions') {
-            betOptions = storageChange.newValue;
-            console.log("BetOptions: " + betOptions);
+        switch (key) {
+            case 'bonus':
+                bonus = storageChange.newValue;
+                break;
+            case 'bet':
+                bet = storageChange.newValue;
+                break;
+            case 'minPercent':
+                minPercent = storageChange.newValue;
+                break;
+            case 'seconds':
+                seconds = storageChange.newValue;
+                break;
+            case 'percentToBet':
+                percentToBet = storageChange.newValue;
+                break;
+            case 'pointSum':
+                pointSum = storageChange.newValue;
+                break;
         }
     }
 });
@@ -47,8 +63,20 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         bet = msg.bet;
         sendResponse({status: 'ok'});
     }
-    if ('betOptions' in msg) {
-        betOptions = msg.betOptions;
+    if ('minPercent' in msg) {
+        minPercent = msg.minPercent;
+        sendResponse({status: 'ok'});
+    }
+    if ('seconds' in msg) {
+        seconds = msg.seconds;
+        sendResponse({status: 'ok'});
+    }
+    if ('percentToBet' in msg) {
+        percentToBet = msg.percentToBet;
+        sendResponse({status: 'ok'});
+    }
+    if ('pointSum' in msg) {
+        pointSum = msg.pointSum;
         sendResponse({status: 'ok'});
     }
     if ('urlChanged' in msg) {
@@ -56,7 +84,6 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         setTimeout(checkPage, 5000);
         sendResponse({status: 'ok'})
     }
-
 });
 
 function until(conditionFunction) {
@@ -65,7 +92,6 @@ function until(conditionFunction) {
         if(conditionFunction()) resolve();
         else setTimeout(_ => poll(resolve), 1000);
     }
-
     return new Promise(poll);
 }
 
@@ -81,12 +107,10 @@ function clickPointButton() {
         if (index !== 0) {
             console.log("Clicked points")
             currentElem.click();
-            //TODO send message and update popup with points collected
-
-            chrome.runtime.sendMessage({increment: "addPoint"}, function(response) {
-                console.log(response.confirm);
+            chrome.runtime.sendMessage({increment: 1}, function(response) {
+                if(chrome.runtime.lastError) { msg = {}; }
+                else { msg = msg || {}; }
             });
-
         }
     });
 }
@@ -99,14 +123,14 @@ function openPredictionPage() {
     let pointsText = document.querySelector('[data-test-selector = "balance-string"]')
         .firstElementChild.innerHTML; //get current points
     let pointsString = pointsText.match(/(\d+.\d+)/)[0];
-    points = Number(pointsString);
+    let points = Number(pointsString);
     if (pointsText.includes('K')) {
         points *= 1000;
     } else if (pointsText.includes('M')) {
         points *= 1000000;
     }
     console.log("Points: " + points);
-    betAmount = Math.floor(points * 0.1); //TODO make this 0.1 a user option (what percentage of points they want to click)
+    betAmount = Math.floor(points * (Number(percentToBet) / 100));
     try {
         document.querySelector( //gets to prediction page
             '[data-test-selector = "predictions-list-item__title"]').closest('button').click();
@@ -139,7 +163,7 @@ function makePrediction() {
     let pointInputsRed = document.querySelectorAll('[type = "number"]')[1];
     console.log(pointInputsBlue);
     console.log(pointInputsRed);
-    if (percentBlue < (50 - ~~((0 + 1) / 2))) { //TODO make this 0 a user option (right now 0 is a placeholder for the difference between the two bet options)
+    if (percentBlue < (50 - ~~(Number(minPercent) / 2))) {
         pointInputsBlue.value = betAmount;
         let event = new Event("change", { bubbles: true });
         pointInputsBlue.dispatchEvent(event);
@@ -147,7 +171,7 @@ function makePrediction() {
             '[style = "background-color: rgb(56, 122, 255); border-color: rgb(56, 122, 255); color: rgb(255, 255, 255);"]')
             .closest('button').click();
         console.log("Clicked blue with " + betAmount + " points");
-    } else if (percentBlue > (50 + ~~((0 + 1) /2))) {
+    } else if (percentBlue > (50 + ~~(Number(minPercent) /2))) {
         pointInputsRed.value = betAmount;
         let event = new Event("change", { bubbles: true });
         pointInputsRed.dispatchEvent(event);
@@ -160,7 +184,6 @@ function makePrediction() {
     }
 }
 
-
 function checkPage() {
     // Prevent firing script upon simultaneous redirects and fast page switching
     if (!true_check) { return }
@@ -171,7 +194,7 @@ function checkPage() {
     if (document.body.contains(document.getElementsByClassName('community-points-summary')[0])) {
         // Presumably on a channel page that already contains points section div
         console.log('Detected inside of a channel page.');
-        console.log('Bonus: ' + bonus + ' Bet: ' + bet + ' BetOptions: ' + betOptions);
+        console.log('Bonus: ' + bonus + ' Bet: ' + bet + ' minPercent: ' + minPercent, ' pointSum: ' + pointSum);
 
         // Pre-check
         if (bonus) {
@@ -194,7 +217,7 @@ function checkPage() {
                 async function() {
                 try {
                     openPredictionPage();
-                    await until (_ => calcTime() < 20); //TODO make this 20 a user option: it represents how many seconds left before the bet executes
+                    await until (_ => calcTime() < Number(seconds));
                     console.log("Await finished!");
                     makePrediction();
                 } catch (error) {
@@ -203,7 +226,6 @@ function checkPage() {
 
             });
         }
-
     }
     else {
         // Presumably outside a channel page
@@ -216,7 +238,6 @@ function main() {
         true_check = true;
         checkPage();
     }, 15000);
-
 }
 
 main();

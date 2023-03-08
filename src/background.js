@@ -7,7 +7,7 @@ setTimeout(function(){
         url: '*://*.twitch.tv/*',
     }, function(tabs) {
         console.log(tabs);
-        // If no Twitch tabs exist, stop the precheck.
+        // If no Twitch tabs exist, stop pre-check.
         if (!Array.isArray(tabs) || !tabs.length) {
             console.log('No matching tabs found.');
             return null;
@@ -25,6 +25,24 @@ setTimeout(function(){
                 }});
         });
     })}, 1000);
+
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        console.log(sender.tab);
+        if (request.increment === 1) {
+            chrome.storage.sync.get({
+                pointSum: 0,
+            }, function(items) {
+                let pointSumAdded = items.pointSum + 1;
+                chrome.storage.sync.set({
+                    pointSum: pointSumAdded
+                }, function(){
+                    console.log("PointSumAdded: " + pointSumAdded);
+                });
+            });
+        }
+    }
+);
 
 // Handle URL change for Twitch Tabs to prevent bonus points detection from breaking
 chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
@@ -44,5 +62,5 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
 });
 
 //Create popup for extension button
-chrome.browserAction.setPopup({popup: 'popup.html'})
+chrome.browserAction.setPopup({popup: 'popup.html'});
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
-    <title>Twitch Channel Points Autoclicker/Autogambler</title>
+    <title>Twitch Channel Points Autoclicker</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="popup.css">
 </head>
@@ -11,36 +11,33 @@
     </div>
     <div class="autoBonus">
         <label for="autoBonus">Automate Point Bonus Collection
-            <input type="checkbox" id="autoBonus" name="autoBonus"><br>
+            <input class="tgl-btn" type="checkbox" id="autoBonus" name="autoBonus">
+            <br>
         </label>
     </div>
 
     <div class="autoBetter">
         <label for="autoBet">Automate Betting
-            <input type="checkbox" id="autoBet" name="autoBet">
+            <input class="tgl-btn" type="checkbox" id="autoBet" name="autoBet">
         </label><br>
-        <label for="betPoints">Min % Point Difference
-            <input type="radio" id="betPoints" name="betOptions" value="betPoints"><br>
-            <input type="range" min="1" max="50" value="10" class="slider" id="percentPoints"
-                   oninput="this.nextElementSibling.value = this.value + '%'">
-            <output>10%</output>
+        <label for="minPercent">Min % Point Difference
+            <br>
+            <input type="range" min="1" max="30" value="10" class="slider" id="minPercent">
+            <output id="percentDisplay">10%</output>
             <br>
         </label>
-        <label for="betPoints">Min % People (Coming Soon)
-            <input type="radio" id="betPeople" name="betOptions" value="betPeople"><br>
-            <input type="range" min="1" max="50" value="10" class="slider" id="percentPeople"
-                   oninput="this.nextElementSibling.value = this.value + '%'">
-            <output>10%</output>
+        <label for="seconds">Seconds Before Bet Closes
+            <br>
+            <input type="range" min="1" max="59" value="10" class="slider" id="seconds">
+            <output id="secondsDisplay">10s</output>
             <br>
         </label>
-        <label for="betSeconds">Seconds Before Bet Closes
-            <input type="checkbox" id="betSeconds" name="autoBet"> <br>
-            <input type="range" min="1" max="60" value="10" class="slider" id="seconds"
-                   oninput="this.nextElementSibling.value = this.value +'s'">
-            <output>10s</output>
+        <label for="percentToBet">Percent of Points to Bet
+            <br>
+            <input type="range" min="5" max="100" value="10" class="slider" id="percentToBet">
+            <output id="percentToBetDisplay">10%</output>
             <br>
         </label>
-
     </div>
     <div class="pointTotal">
         <span id="clickPoints"> Clicked Points: </span>

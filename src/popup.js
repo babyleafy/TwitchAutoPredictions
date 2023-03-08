@@ -1,14 +1,16 @@
 function saveOptions() {
 	let bonus = document.getElementById('autoBonus').checked;
 	let bet = document.getElementById('autoBet').checked;
-	let betOptions = document.querySelector('input[name="betOptions"]:checked')?.value;
+	let minPercent = document.querySelector('input[id="minPercent"]').value;
+	let seconds = document.getElementById('seconds').value;
+	let percentToBet = document.getElementById('percentToBet').value;
 	let pointSum = document.getElementById('accumulatedClickPoints').innerHTML;
-	//TODO store all new slider values in chrome storage
-	//TODO save betPoints value
 	chrome.storage.sync.set({
 		bonus: bonus,
 		bet: bet,
-		betOptions: betOptions,
+		minPercent: minPercent,
+		seconds : seconds,
+		percentToBet: percentToBet,
 		pointSum: pointSum,
 	}, function() {
 		// Update status to let user know options were saved.
@@ -30,15 +32,15 @@ function saveOptions() {
 		tabs.forEach(function(tab) {
 			// Initializes handshake with potential twitch-clicker.js script inside the tab
 			chrome.tabs.sendMessage(tab.id,
-				{bonus: bonus, bet: bet, betOptions: betOptions, pointSum: pointSum}, function(msg) {
+				{bonus: bonus, bet: bet, minPercent: minPercent, seconds: seconds, pointSum: pointSum},
+				function(msg) {
 				if(chrome.runtime.lastError) { msg = {}; }
 				else { msg = msg || {}; }
 			});
 		});
 	});
 
-	console.log("Options saved");
-	console.log("Bonus: " + bonus + " Bet: " + bet + " Bet Options: " + betOptions + "PointSum: " + pointSum);
+	console.log("Options saved!");
 }
 
 // Restores Options state using the preferences saved in chrome.storage
@@ -46,37 +48,42 @@ function restoreOptions() {
 	chrome.storage.sync.get({
 		'bonus': false,
 		'bet': false,
-		'betOptions': null,
+		'minPercent': '10',
+		'seconds': '10',
+		'percentToBet': '10',
 		'pointSum': '0'
 	}, function(items) {
 		document.getElementById('autoBonus').checked = items.bonus;
 		document.getElementById('autoBet').checked = items.bet;
-		document.getElementById('points').innerHTML = items.pointSum;
-		if (items.betOptions === "betPeople") {
-			document.getElementById('betPeople').checked = true;
-		} else if (items.betOptions === "betPoints") {
-			document.getElementById('betPoints').checked = true;
-		}
-		let bets = document.querySelector('input[name="betOptions"]:checked');
-		console.log("Bonus: " + items.bonus + " Bet: " + items.bet + " 	Options: " + items.betOptions);
+		document.getElementById('minPercent').value = items.minPercent;
+		document.getElementById('percentDisplay').innerHTML = items.minPercent + "%";
+		document.getElementById('seconds').value = items.seconds;
+		document.getElementById('secondsDisplay').innerHTML = items.seconds + "s";
+		document.getElementById('percentToBet').value = items.percentToBet;
+		document.getElementById('percentToBetDisplay').innerHTML = items.percentToBet + "%";
+		document.getElementById('accumulatedClickPoints').innerHTML = (Number(items.pointSum) * 50).toString();
 	});
 	console.log("Options restored");
 
 }
 
-chrome.runtime.onMessage.addListener(
-	function(request, sender, sendResponse) {
-		console.log(sender.tab);
-		if (request.increment === "addPoint")
-			currVal = parseInt(document.getElementById('accumulatedClickPoints').innerHTML);
-			currVal += 1;
-			document.getElementById('accumulatedClickPoints').innerHTML = currVal.toString();
-			sendResponse({confirm: "confirmed add"});
-	}
-  );
-
+//For updating slider values
+let percentSlider = document.getElementById("minPercent");
+let percentDisplay = document.getElementById("percentDisplay");
+let secondsSlider = document.getElementById("seconds");
+let secondsDisplay = document.getElementById("secondsDisplay");
+let percentToBetSlider = document.getElementById("percentToBet");
+let percentToBetDisplay = document.getElementById("percentToBetDisplay");
 
 //On load
 document.addEventListener('DOMContentLoaded', restoreOptions); //Restores options from storage on loading
 document.getElementById('save').addEventListener('click', saveOptions); //Connects save function to button
-
+percentSlider.addEventListener('input', function() {
+	percentDisplay.innerHTML = percentSlider.value+"%";
+});
+secondsSlider.addEventListener('input', function() {
+	secondsDisplay.innerHTML = secondsSlider.value+"s";
+});
+percentToBetSlider.addEventListener('input', function() {
+	percentToBetDisplay.innerHTML = percentToBetSlider.value+"%";
+});
