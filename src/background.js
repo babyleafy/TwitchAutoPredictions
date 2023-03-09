@@ -20,8 +20,8 @@ setTimeout(function(){
 
                 // If handshake fails (action.js doesn't exist in the tab) - inject the main script and its reverse dependency
                 if (msg.status !== 'confirmed') {
-                    chrome.tabs.executeScript(tab.id, {file: 'action.js'});
-                    chrome.tabs.executeScript(tab.id, {file: 'arrive.js'});
+                    chrome.scripting.executeScript({target: {tabId: tab.id},
+                        files: ['action.js', 'arrive.js']});
                 }});
         });
     })}, 1000);
@@ -33,9 +33,9 @@ chrome.runtime.onMessage.addListener(
             chrome.storage.sync.get({
                 pointSum: 0,
             }, function(items) {
-                let pointSumAdded = items.pointSum + 1;
+                let pointSumAdded = Number(items.pointSum) + 1;
                 chrome.storage.sync.set({
-                    pointSum: pointSumAdded
+                    pointSum: pointSumAdded.toString()
                 }, function(){
                     console.log("PointSumAdded: " + pointSumAdded);
                 });
@@ -62,5 +62,5 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
 });
 
 //Create popup for extension button
-chrome.browserAction.setPopup({popup: 'popup.html'});
+chrome.action.setPopup({popup: 'popup.html'});
 

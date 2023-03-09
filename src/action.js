@@ -96,16 +96,21 @@ function until(conditionFunction) {
 }
 
 function calcTime(){
-    let timeString = $('p:contains("Submissions closing in"*)').innerHTML;
-    let timeMatch = timeString.match(/\D+(\d{1,2}):(\d{2})/)[2];
-    return Number(timeMatch);
+    let timeString = $('p:contains("Submissions closing in")').html();
+    let timeMatch = timeString.match(/\D+(\d{1,2}):(\d{2})/);
+    if (timeMatch !== null) {
+        timeMatch = timeMatch[2];
+        console.log("Time: " + timeMatch);
+        return Number(timeMatch);
+    }
+    return 15;
 }
 
 function clickPointButton() {
     let elems = document.querySelector('.community-points-summary').querySelectorAll('button');
     elems.forEach(function(currentElem, index, arr) {
         if (index !== 0) {
-            console.log("Clicked points")
+            console.log("Clicked bonus!")
             currentElem.click();
             chrome.runtime.sendMessage({increment: 1}, function(response) {
                 if(chrome.runtime.lastError) { msg = {}; }
@@ -118,7 +123,6 @@ function clickPointButton() {
 function openPredictionPage() {
     if (!document.body.contains(document.querySelector('[data-test-selector = "predictions-list-item__title"]'))){
         document.querySelector('[aria-label = "Points Balance"]').click(); // clicks on points balance
-        console.log("Points balance clicked");
     }
     let pointsText = document.querySelector('[data-test-selector = "balance-string"]')
         .firstElementChild.innerHTML; //get current points
@@ -134,9 +138,7 @@ function openPredictionPage() {
     try {
         document.querySelector( //gets to prediction page
             '[data-test-selector = "predictions-list-item__title"]').closest('button').click();
-        console.log("Prediction interface reached");
     } catch (e) {
-        console.log("Prediction interface reached already");
     }
 
 }
@@ -147,22 +149,18 @@ function makePrediction() {
         '[data-test-selector="prediction-summary-outcome__percentage"] [style="color: rgb(56, 122, 255);"] span');
     console.log(percentBlueElem);
     if (percentBlueElem === null) {
-        console.log("Couldn't find percentage");
         return;
     }
     document.querySelector( //clicks on Predict with Custom Amount button
         '[data-test-selector = "prediction-checkout-active-footer__input-type-toggle"]').click();
-    console.log("Clicked on Predict with Custom Amount button");
 
+    //Get blue percent and red percent
     let percentBlueText = percentBlueElem.innerHTML;
     let percentBlueStringMatch = percentBlueText.match(/(\d+)/)[0];
     let percentBlue = Number(percentBlueStringMatch);
-    console.log("Percent Blue: " + percentBlue);
-
     let pointInputsBlue = document.querySelectorAll('[type = "number"]')[0];
     let pointInputsRed = document.querySelectorAll('[type = "number"]')[1];
-    console.log(pointInputsBlue);
-    console.log(pointInputsRed);
+
     if (percentBlue < (50 - ~~(Number(minPercent) / 2))) {
         pointInputsBlue.value = betAmount;
         let event = new Event("change", { bubbles: true });
@@ -193,9 +191,6 @@ function checkPage() {
 
     if (document.body.contains(document.getElementsByClassName('community-points-summary')[0])) {
         // Presumably on a channel page that already contains points section div
-        console.log('Detected inside of a channel page.');
-        console.log('Bonus: ' + bonus + ' Bet: ' + bet + ' minPercent: ' + minPercent, ' pointSum: ' + pointSum);
-
         // Pre-check
         if (bonus) {
             clickPointButton();

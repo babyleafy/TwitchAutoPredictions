@@ -14,7 +14,7 @@ input[type="range"] {
 }
 
 h1 {
-    font-family: Raleway, "Droid Sans", sans-serif;
+    font-family: 'Google Sans', Arial, sans-serif;;
     color: #9146FF;
     font-stretch: expanded;
     -webkit-text-stroke: 1px black;

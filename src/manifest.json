@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Automated Twitch Predictions",
   "description": "Automatically makes Twitch Predictions using user settings",
   "version": "1.0",
@@ -15,22 +15,24 @@
     }
   ],
   "background": {
-    "scripts": ["background.js"],
-    "persistent": true
+    "service_worker": "background.js"
   },
   "permissions": [
-    "*://*.twitch.tv/*",
     "tabs",
     "storage",
     "notifications",
-    "webNavigation"
+    "webNavigation",
+    "scripting"
   ],
-  "web_accessible_resources": [
-    "arrive.js",
-    "action.js",
-    "jquery-3.6.3.min.js"
+  "host_permissions": [
+    "*://*.twitch.tv/*"
   ],
-  "browser_action": {
+  "web_accessible_resources": [{
+    "resources": ["arrive.js", "action.js", "jquery-3.6.3.min.js"],
+    "matches": ["*://*.twitch.tv/*"],
+    "extension_ids" : ["cifojbeojkfmlghgnkldcmidhhkllcmk"]
+  }],
+  "action": {
     "default_title": "Twitch AutoBetter",
     "default_icon": {
       "48": "icon48.png",
