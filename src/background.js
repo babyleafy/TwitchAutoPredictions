@@ -40,6 +40,17 @@ chrome.runtime.onMessage.addListener(
                     console.log("PointSumAdded: " + pointSumAdded);
                 });
             });
+        } else if (request.increment === 2) {
+            chrome.storage.sync.get({
+                predSum: 0,
+            }, function(items) {
+                let predSumAdded = Number(items.predSum) + 1;
+                chrome.storage.sync.set({
+                    predSum: predSumAdded.toString()
+                }, function(){
+                    console.log("predSumAdded: " + predSumAdded);
+                });
+            });
         }
     }
 );

@@ -5,6 +5,7 @@ function saveOptions() {
 	let seconds = document.getElementById('seconds').value;
 	let percentToBet = document.getElementById('percentToBet').value;
 	let pointSum = document.getElementById('accumulatedClickPoints').innerHTML;
+	let predSum = document.getElementById('accumulatedPredictionsMade').innerHTML;
 	chrome.storage.sync.set({
 		bonus: bonus,
 		bet: bet,
@@ -12,10 +13,11 @@ function saveOptions() {
 		seconds : seconds,
 		percentToBet: percentToBet,
 		pointSum: pointSum,
+		predSum: predSum
 	}, function() {
 		// Update status to let user know options were saved.
 		let saveStatus = document.getElementById('status');
-		saveStatus.innerHTML = 'Options saved! Please refresh Twitch Tabs';
+		saveStatus.innerHTML = 'Options saved! Please refresh tab for changes to take effect.';
 		setTimeout(function() {
 			saveStatus.innerHTML = '';
 		}, 750);
@@ -32,7 +34,8 @@ function saveOptions() {
 		tabs.forEach(function(tab) {
 			// Initializes handshake with potential twitch-clicker.js script inside the tab
 			chrome.tabs.sendMessage(tab.id,
-				{bonus: bonus, bet: bet, minPercent: minPercent, seconds: seconds, pointSum: pointSum},
+				{bonus: bonus, bet: bet, minPercent: minPercent, seconds: seconds,
+					pointSum: pointSum, predSum: predSum},
 				function(msg) {
 				if(chrome.runtime.lastError) { msg = {}; }
 				else { msg = msg || {}; }
@@ -51,7 +54,8 @@ function restoreOptions() {
 		'minPercent': '10',
 		'seconds': '10',
 		'percentToBet': '10',
-		'pointSum': '0'
+		'pointSum': '0',
+		'predSum': '0'
 	}, function(items) {
 		document.getElementById('autoBonus').checked = items.bonus;
 		document.getElementById('autoBet').checked = items.bet;
@@ -62,6 +66,7 @@ function restoreOptions() {
 		document.getElementById('percentToBet').value = items.percentToBet;
 		document.getElementById('percentToBetDisplay').innerHTML = items.percentToBet + "%";
 		document.getElementById('accumulatedClickPoints').innerHTML = (Number(items.pointSum) * 50).toString();
+		document.getElementById('accumulatedPredictionsMade').innerHTML = items.predSum;
 	});
 	console.log("Options restored");
 

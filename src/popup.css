@@ -79,22 +79,22 @@ button.buttonStyle {
     cursor: pointer;
   }
 
-.autoBetter, .autoBonus, .pointTotal{
+.autoBetter, .autoBonus, .statTotals{
     border: 7px solid #5e19ca;
     border-radius: 10px;
     background-color: #FFFFFF;
     padding: 10px;
     margin: 8px auto auto;
     width: 300px;
-    height: 150px;
+    height: 140px;
 }
 
 .autoBonus {
     height: 20px;
 }
 
-.pointTotal{
-    height: 20px;
+.statTotals{
+    height: 40px;
     width: 150px;
     margin-bottom: 8px;
 }

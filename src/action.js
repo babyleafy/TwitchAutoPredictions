@@ -99,9 +99,10 @@ function calcTime(){
     let timeString = $('p:contains("Submissions closing in")').html();
     let timeMatch = timeString.match(/\D+(\d{1,2}):(\d{2})/);
     if (timeMatch !== null) {
-        timeMatch = timeMatch[2];
+        let timeMinutes = timeMatch[1];
+        let timeSeconds = timeMatch[2];
         console.log("Time: " + timeMatch);
-        return Number(timeMatch);
+        return Number(timeMinutes) * 60 + Number(timeSeconds);
     }
     return 15;
 }
@@ -169,6 +170,13 @@ function makePrediction() {
             '[style = "background-color: rgb(56, 122, 255); border-color: rgb(56, 122, 255); color: rgb(255, 255, 255);"]')
             .closest('button').click();
         console.log("Clicked blue with " + betAmount + " points");
+
+        //Send message to background script to increment prediction count
+        chrome.runtime.sendMessage({increment: 2}, function(response) {
+            if(chrome.runtime.lastError) { msg = {}; }
+            else { msg = msg || {}; }
+        });
+
     } else if (percentBlue > (50 + ~~(Number(minPercent) /2))) {
         pointInputsRed.value = betAmount;
         let event = new Event("change", { bubbles: true });
@@ -177,6 +185,13 @@ function makePrediction() {
             '[style = "background-color: rgb(245, 0, 155); border-color: rgb(245, 0, 155); color: rgb(255, 255, 255);"]')
             .closest('button').click();
         console.log("Clicked red with " + betAmount + " points");
+
+        //Send message to background script to increment prediction count
+        chrome.runtime.sendMessage({increment: 2}, function(response) {
+            if(chrome.runtime.lastError) { msg = {}; }
+            else { msg = msg || {}; }
+        });
+
     } else {
         console.log("No bet made");
     }
@@ -200,8 +215,8 @@ function checkPage() {
         if (bet) {
             try {
                 openPredictionPage();
-                if (calcTime() > 25) {
-                    setTimeout(makePrediction, (calcTime() - 20) * 1000);
+                if (calcTime() > Number(seconds)) {
+                    setTimeout(makePrediction, (calcTime() - Number(seconds)) * 1000);
                 } else {
                     makePrediction();
                 }
@@ -215,8 +230,8 @@ function checkPage() {
                     await until (_ => calcTime() < Number(seconds));
                     console.log("Await finished!");
                     makePrediction();
-                } catch (error) {
-                    console.log(error);
+                } catch (e) {
+                    console.log(e);
                 }
 
             });
