@@ -30,8 +30,7 @@ function saveOptions() {
 		tabs.forEach(function(tab) {
 			// Initializes handshake with potential twitch-clicker.js script inside the tab
 			chrome.tabs.sendMessage(tab.id,
-				{bonus: bonus, bet: bet, minPercent: minPercent, seconds: seconds,
-					pointSum: pointSum, predSum: predSum},
+				{bonus: bonus, bet: bet, minPercent: minPercent, seconds: seconds},
 				function(msg) {
 				if(chrome.runtime.lastError) { msg = {}; }
 				else { msg = msg || {}; }

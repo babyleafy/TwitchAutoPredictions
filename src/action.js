@@ -3,7 +3,6 @@ let bonus;
 let bet;
 let minPercent;
 let seconds;
-let pointSum;
 let betAmount;
 let percentToBet;
 // obtains options from storage
@@ -13,14 +12,12 @@ chrome.storage.sync.get({
     'minPercent': '10',
     'seconds': '10',
     'percentToBet': '10',
-    'pointSum': '0',
 }, function(items) {
     bonus = items.bonus;
     bet = items.bet;
     minPercent = items.minPercent;
     seconds = items.seconds;
     percentToBet = items.percentToBet;
-    pointSum = items.pointSum;
 });
 
 //Switches status when user changes options
@@ -43,8 +40,7 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
             case 'percentToBet':
                 percentToBet = storageChange.newValue;
                 break;
-            case 'pointSum':
-                pointSum = storageChange.newValue;
+            default:
                 break;
         }
     }
@@ -73,10 +69,6 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     }
     if ('percentToBet' in msg) {
         percentToBet = msg.percentToBet;
-        sendResponse({status: 'ok'});
-    }
-    if ('pointSum' in msg) {
-        pointSum = msg.pointSum;
         sendResponse({status: 'ok'});
     }
     if ('urlChanged' in msg) {
@@ -127,7 +119,7 @@ function openPredictionPage() {
     } //TODO check if clicking point balance will actually close the prediction page (might need to use while loop to click until predictionlistitem is found)
     let pointsText = document.querySelector('[data-test-selector = "balance-string"]')
         .firstElementChild.innerHTML; //get current points
-    let pointsString = pointsText.match(/(\d+.\d+)/);
+    let pointsString = pointsText.match(/(\d+.?\d+)/);
     let points = Number(pointsString[0]);
     if (pointsText.includes('K')) {
         points *= 1000;
