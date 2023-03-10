@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Twitch AutoPreidctions",
+  "name": "Twitch AutoPredictions",
   "description": "Automates collection of Twitch bonuses and predictions",
   "version": "1.0",
   "icons": {

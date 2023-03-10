@@ -127,21 +127,19 @@ function openPredictionPage() {
     }
     let pointsText = document.querySelector('[data-test-selector = "balance-string"]')
         .firstElementChild.innerHTML; //get current points
-    let pointsString = pointsText.match(/(\d+.\d+)/)[0];
-    let points = Number(pointsString);
+    let pointsString = pointsText.match(/(\d+.\d+)/);
+    let points = Number(pointsString[0]);
     if (pointsText.includes('K')) {
         points *= 1000;
     } else if (pointsText.includes('M')) {
         points *= 1000000;
     }
-    console.log("Points: " + points);
     betAmount = Math.floor(points * (Number(percentToBet) / 100));
     try {
         document.querySelector( //gets to prediction page
             '[data-test-selector = "predictions-list-item__title"]').closest('button').click();
     } catch (e) {
     }
-
 }
 
 function makePrediction() {
@@ -157,8 +155,8 @@ function makePrediction() {
 
     //Get blue percent and red percent
     let percentBlueText = percentBlueElem.innerHTML;
-    let percentBlueStringMatch = percentBlueText.match(/(\d+)/)[0];
-    let percentBlue = Number(percentBlueStringMatch);
+    let percentBlueStringMatch = percentBlueText.match(/(\d+)/);
+    let percentBlue = Number(percentBlueStringMatch[0]);
     let pointInputsBlue = document.querySelectorAll('[type = "number"]')[0];
     let pointInputsRed = document.querySelectorAll('[type = "number"]')[1];
 
