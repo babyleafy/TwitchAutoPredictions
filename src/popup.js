@@ -4,16 +4,12 @@ function saveOptions() {
 	let minPercent = document.querySelector('input[id="minPercent"]').value;
 	let seconds = document.getElementById('seconds').value;
 	let percentToBet = document.getElementById('percentToBet').value;
-	let pointSum = document.getElementById('accumulatedClickPoints').innerHTML;
-	let predSum = document.getElementById('accumulatedPredictionsMade').innerHTML;
 	chrome.storage.sync.set({
 		bonus: bonus,
 		bet: bet,
 		minPercent: minPercent,
 		seconds : seconds,
 		percentToBet: percentToBet,
-		pointSum: pointSum,
-		predSum: predSum
 	}, function() {
 		// Update status to let user know options were saved.
 		let saveStatus = document.getElementById('status');

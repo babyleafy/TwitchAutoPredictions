@@ -124,7 +124,7 @@ function clickPointButton() {
 function openPredictionPage() {
     if (!document.body.contains(document.querySelector('[data-test-selector = "predictions-list-item__title"]'))){
         document.querySelector('[aria-label = "Points Balance"]').click(); // clicks on points balance
-    }
+    } //TODO check if clicking point balance will actually close the prediction page (might need to use while loop to click until predictionlistitem is found)
     let pointsText = document.querySelector('[data-test-selector = "balance-string"]')
         .firstElementChild.innerHTML; //get current points
     let pointsString = pointsText.match(/(\d+.\d+)/);
